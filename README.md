@@ -1,0 +1,2 @@
+Using nRF5_SDK_for_Thread_and_Zigbee_v4.0.0_dc7186b
+path: nRF5_SDK_for_Thread_and_Zigbee_v4.0.0_dc7186b\examples\zigbee\experimental\
