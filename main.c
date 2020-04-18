@@ -99,26 +99,13 @@ APP_TIMER_DEF(zb_app_timer);
 zb_void_t report_attribute_cb(zb_uint16_t addr, zb_uint8_t ep, zb_uint16_t cluster_id,
         zb_uint16_t attr_id, zb_uint8_t attr_type, zb_uint8_t *value)
 {
-  zb_buf_t *buf = zb_get_in_buf();
-  zb_test_reporting_info_t *test_rep_info = ZB_GET_BUF_PARAM(buf, zb_test_reporting_info_t);
-  NRF_LOG_INFO(TRACE_ZCL1, ">> report_attribute_cb addr %d ep %hd, cluster %d, attr %d",
-            (FMT__D_H_D_D, addr, ep, cluster_id, attr_id));
-  ZVUNUSED(attr_type);
-  if (ep != DST_ENDPOINT || cluster_id != ZB_ZCL_CLUSTER_ID_ON_OFF || attr_id != TEST_REPORTING_ATTR)
-  {
-    g_error_cnt++;
-    NRF_LOG_INFO(TRACE_ERROR, "Error, incorrect report is received", (FMT__0));
-  }
-  NRF_LOG_INFO(TRACE_ZCL2, "reporting interval %d, value %hd",
-            (FMT__D_H, g_reporting_interval, *value));
-  test_rep_info->ep = ep;
-  test_rep_info->cluster_id = cluster_id;
-  test_rep_info->attr_id = attr_id;
-  test_rep_info->value = *value;
-  test_rep_info->rep_interval = g_reporting_interval;
-  g_reporting_interval = 0;
-  next_step(buf);
-  NRF_LOG_INFO(TRACE_ZCL1, "<< report_attribute_cb", (FMT__0));
+    NRF_LOG_INFO("addr      : 0x%04hx", addr);
+    NRF_LOG_INFO("ep        : %d", ep);
+    NRF_LOG_INFO("cluster_id: 0x%04hx", cluster_id);
+    NRF_LOG_INFO("attr_id   : 0x%04hx", attr_id);
+    NRF_LOG_INFO("attr_type : 0x%04hx", attr_type);
+    NRF_LOG_INFO("attr_id   : 0x%04hx", attr_id);
+    NRF_LOG_INFO("value     : %d", value);
 }
 
 
@@ -203,6 +190,8 @@ static void multi_sensor_clusters_attr_init(void)
 // From https://devzone.nordicsemi.com/f/nordic-q-a/49156/zigbee-attribute-reporting-not-reporting-as-configured
 void configure_attribute_reporting()
 {
+    zb_zcl_status_t zcl_status = 0;
+    zb_ret_t zb_status = RET_OK;
     zb_zcl_reporting_info_t temp_rep_info;
     memset(&temp_rep_info, 0, sizeof(temp_rep_info));
     
@@ -216,8 +205,14 @@ void configure_attribute_reporting()
     temp_rep_info.u.send_info.max_interval = 300;    // 5 minutes
     temp_rep_info.u.send_info.delta.s16 = 0x0032;        // 0.5 degrees
     
-    zb_zcl_put_reporting_info(&temp_rep_info, ZB_TRUE);
-    //zb_zcl_start_attr_reporting(10, ZB_ZCL_CLUSTER_ID_TEMP_MEASUREMENT, ZB_ZCL_CLUSTER_SERVER_ROLE, 
+    NRF_LOG_INFO("Is reporting on?: %d", zcl_is_attr_reported(MULTI_SENSOR_ENDPOINT, ZB_ZCL_CLUSTER_ID_TEMP_MEASUREMENT, ZB_ZCL_CLUSTER_SERVER_ROLE, 0));
+    zcl_status = zb_zcl_put_reporting_info(&temp_rep_info, ZB_TRUE);
+    NRF_LOG_INFO("%d = zb_zcl_put_reporting_info", zcl_status);
+
+    //zb_status = zb_zcl_start_attr_reporting(10, 0x0402, 0x0104, 0);
+    NRF_LOG_INFO("Is reporting on?: %d", zcl_is_attr_reported(MULTI_SENSOR_ENDPOINT, ZB_ZCL_CLUSTER_ID_TEMP_MEASUREMENT, ZB_ZCL_CLUSTER_SERVER_ROLE, 0));
+    zb_status = zb_zcl_start_attr_reporting(MULTI_SENSOR_ENDPOINT, ZB_ZCL_CLUSTER_ID_TEMP_MEASUREMENT, ZB_ZCL_CLUSTER_SERVER_ROLE, 0);
+    NRF_LOG_INFO("%d = zb_zcl_start_attr_reporting", zcl_status); 
 }
 
 /**@brief Function for initializing LEDs.
@@ -247,6 +242,7 @@ static void zb_app_timer_handler(void * context)
     /* Get new temperature measured value */
     new_temp_value = (zb_int16_t)sensorsim_measure(&m_temperature_sim_state, &m_temperature_sim_cfg);
     NRF_LOG_INFO("zb_app_timer_handler. temp: %d", new_temp_value);
+    NRF_LOG_INFO("Is reporting on?: %d", zcl_is_attr_reported(MULTI_SENSOR_ENDPOINT, ZB_ZCL_CLUSTER_ID_TEMP_MEASUREMENT, ZB_ZCL_CLUSTER_SERVER_ROLE, 0));
     zcl_status = zb_zcl_set_attr_val(MULTI_SENSOR_ENDPOINT, 
                                      ZB_ZCL_CLUSTER_ID_TEMP_MEASUREMENT, 
                                      ZB_ZCL_CLUSTER_SERVER_ROLE, 
@@ -396,7 +392,7 @@ int main(void)
     /* Initialize sensor device attibutes */
     multi_sensor_clusters_attr_init();
 
-    ZB_ZCL_SET_REPORT_ATTR_CB(&report_attribute_cb);
+    //ZB_ZCL_SET_REPORT_ATTR_CB(&report_attribute_cb);
 
     /** Start Zigbee Stack. */
     zb_err_code = zboss_start_no_autostart();

@@ -19,7 +19,7 @@ Zigbee2mqtt zigbee-herdsman-converter entry
         const endpoint = device.getEndpoint(10);
         const binds = ['msTemperatureMeasurement'];
         await bind(endpoint, coordinatorEndpoint, binds);
-        await configureReporting.temperature(endpoint);
+        // await configureReporting.temperature(endpoint);
     },
 },
 ```
