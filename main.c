@@ -16,6 +16,7 @@
 #include "bsp.h"
 #include "boards.h"
 #include "sensorsim.h"
+#include "ms_sensorsim.h"
 
 #include "nrf_log.h"
 #include "nrf_log_ctrl.h"
@@ -28,20 +29,9 @@
 
 #define ZIGBEE_NETWORK_STATE_LED           BSP_BOARD_LED_2                      /**< LED indicating that light switch successfully joind Zigbee network. */
 
-#define MIN_TEMPERATURE_VALUE              0                                    /**< Minimum temperature value as returned by the simulated measurement function. */
-#define MAX_TEMPERATURE_VALUE              4000                                 /**< Maximum temperature value as returned by the simulated measurement function. */
-#define TEMPERATURE_VALUE_INCREMENT        50                                   /**< Value by which the temperature value is incremented/decremented for each call to the simulated measurement function. */
-#define MIN_PRESSURE_VALUE                 700                                  /**< Minimum pressure value as returned by the simulated measurement function. */
-#define MAX_PRESSURE_VALUE                 1100                                 /**< Maximum pressure value as returned by the simulated measurement function. */
-#define PRESSURE_VALUE_INCREMENT           5                                    /**< Value by which the temperature value is incremented/decremented for each call to the simulated measurement function. */
-
 #if !defined ZB_ED_ROLE
 #error Define ZB_ED_ROLE to compile End Device source code.
 #endif
-
-
-//For sensor changing data
-static int sensorsim_updown = 0;
 
 static sensor_device_ctx_t m_dev_ctx;
 
@@ -87,11 +77,6 @@ ZB_ZCL_DECLARE_MULTI_SENSOR_EP(multi_sensor_ep,
 
 ZBOSS_DECLARE_DEVICE_CTX_1_EP(multi_sensor_ctx, multi_sensor_ep);
 
-
-static sensorsim_cfg_t   m_temperature_sim_cfg;                                 /**< Temperature sensor simulator configuration. */
-static sensorsim_state_t m_temperature_sim_state;                               /**< Temperature sensor simulator state. */
-static sensorsim_cfg_t   m_pressure_sim_cfg;                                    /**< Pressure sensor simulator configuration. */
-static sensorsim_state_t m_pressure_sim_state;                                  /**< Pressure sensor simulator state. */
 
 APP_TIMER_DEF(zb_app_timer);
 
@@ -240,7 +225,7 @@ static void zb_app_timer_handler(void * context)
     static zb_int16_t new_temp_value, new_pres_value;
 
     /* Get new temperature measured value */
-    new_temp_value = (zb_int16_t)sensorsim_measure(&m_temperature_sim_state, &m_temperature_sim_cfg);
+    new_temp_value = ms_sensorsim_measure_temperature();
     NRF_LOG_INFO("zb_app_timer_handler. temp: %d", new_temp_value);
     NRF_LOG_INFO("Is reporting on?: %d", zcl_is_attr_reported(MULTI_SENSOR_ENDPOINT, ZB_ZCL_CLUSTER_ID_TEMP_MEASUREMENT, ZB_ZCL_CLUSTER_SERVER_ROLE, 0));
     zcl_status = zb_zcl_set_attr_val(MULTI_SENSOR_ENDPOINT, 
@@ -255,7 +240,7 @@ static void zb_app_timer_handler(void * context)
     }
 
     /* Get new pressure measured value */
-    new_pres_value = (zb_int16_t)sensorsim_measure(&m_pressure_sim_state, &m_pressure_sim_cfg);
+    new_pres_value = ms_sensorsim_measure_pressure();
     zcl_status = zb_zcl_set_attr_val(MULTI_SENSOR_ENDPOINT,
                                      ZB_ZCL_CLUSTER_ID_PRESSURE_MEASUREMENT, 
                                      ZB_ZCL_CLUSTER_SERVER_ROLE, 
@@ -268,24 +253,6 @@ static void zb_app_timer_handler(void * context)
     }
 }
 
-/**@brief Function for initializing the sensor simulators.
- */
-static void sensor_simulator_init(void)
-{
-    m_temperature_sim_cfg.min          = MIN_TEMPERATURE_VALUE;
-    m_temperature_sim_cfg.max          = MAX_TEMPERATURE_VALUE;
-    m_temperature_sim_cfg.incr         = TEMPERATURE_VALUE_INCREMENT;
-    m_temperature_sim_cfg.start_at_max = false;
-
-    sensorsim_init(&m_temperature_sim_state, &m_temperature_sim_cfg);
-
-    m_pressure_sim_cfg.min          = MIN_PRESSURE_VALUE;
-    m_pressure_sim_cfg.max          = MAX_PRESSURE_VALUE;
-    m_pressure_sim_cfg.incr         = PRESSURE_VALUE_INCREMENT;
-    m_pressure_sim_cfg.start_at_max = false;
-
-    sensorsim_init(&m_pressure_sim_state, &m_pressure_sim_cfg);
-}
 
 /**@brief Zigbee stack event handler.
  *
