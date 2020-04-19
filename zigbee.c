@@ -57,6 +57,19 @@ ZB_ZCL_DECLARE_MULTI_SENSOR_EP(multi_sensor_ep,
 ZBOSS_DECLARE_DEVICE_CTX_1_EP(multi_sensor_ctx, multi_sensor_ep);
 
 
+/**@brief Function for the Timer initialization.
+ *
+ * @details Initializes the timer module. This creates and starts application timers.
+ */
+void timers_init(void)
+{
+    ret_code_t err_code;
+
+    // Initialize timer module.
+    err_code = app_timer_init();
+    APP_ERROR_CHECK(err_code);
+}
+
 void zigbee_init(void)
 {
     zb_ret_t       zb_err_code;

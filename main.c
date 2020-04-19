@@ -4,7 +4,7 @@
 //#include "zb_zcl_reporting.h"
 //#include "zb_error_handler.h"
 //#include "zigbee_helpers.h"
-#include "app_timer.h"
+//#include "app_timer.h"
 #include "bsp.h"
 //#include "boards.h"
 //#include "sensorsim.h"
@@ -17,18 +17,6 @@
 
 #include "zb_multi_sensor.h"
 
-/**@brief Function for the Timer initialization.
- *
- * @details Initializes the timer module. This creates and starts application timers.
- */
-static void timers_init(void)
-{
-    ret_code_t err_code;
-
-    // Initialize timer module.
-    err_code = app_timer_init();
-    APP_ERROR_CHECK(err_code);
-}
 
 /**@brief Function for initializing the nrf log module.
  */

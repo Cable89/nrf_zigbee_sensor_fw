@@ -23,6 +23,7 @@
 
 extern sensor_device_ctx_t m_dev_ctx;
 
+void timers_init(void);
 void zigbee_init(void);
 static void zb_app_timer_handler(void * context);
 void zboss_signal_handler(zb_bufid_t bufid);
