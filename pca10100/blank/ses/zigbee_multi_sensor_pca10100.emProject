@@ -59,7 +59,6 @@
       <file file_name="../../../../../../../external/zboss/addons/zcl/zb_zcl_ota_upgrade_addons.c" />
     </folder>
     <folder Name="nRF_Libraries">
-      <file file_name="../../../../../../../components/libraries/button/app_button.c" />
       <file file_name="../../../../../../../components/libraries/util/app_error.c" />
       <file file_name="../../../../../../../components/libraries/util/app_error_handler_gcc.c" />
       <file file_name="../../../../../../../components/libraries/scheduler/app_scheduler.c" />
@@ -94,7 +93,6 @@
       <file file_name="../../../../../../../components/drivers_nrf/nrf_soc_nosd/nrf_soc.c" />
       <file file_name="../../../../../../../modules/nrfx/soc/nrfx_atomic.c" />
       <file file_name="../../../../../../../modules/nrfx/drivers/src/nrfx_clock.c" />
-      <file file_name="../../../../../../../modules/nrfx/drivers/src/nrfx_gpiote.c" />
       <file file_name="../../../../../../../modules/nrfx/drivers/src/prs/nrfx_prs.c" />
       <file file_name="../../../../../../../modules/nrfx/drivers/src/nrfx_rng.c" />
       <file file_name="../../../../../../../modules/nrfx/drivers/src/nrfx_systick.c" />
@@ -102,9 +100,7 @@
       <file file_name="../../../../../../../modules/nrfx/drivers/src/nrfx_uart.c" />
       <file file_name="../../../../../../../modules/nrfx/drivers/src/nrfx_uarte.c" />
     </folder>
-    <folder Name="Board Support">
-      <file file_name="../../../../../../../components/libraries/bsp/bsp.c" />
-    </folder>
+    <folder Name="Board Support" />
     <folder Name="Application">
       <file file_name="../../../main.c" />
       <file file_name="../config/sdk_config.h" />
@@ -113,6 +109,8 @@
       <file file_name="../../../zigbee.c" />
       <file file_name="../../../zigbee.h" />
       <file file_name="../../../zb_multi_sensor.h" />
+      <file file_name="../../../button_handler.c" />
+      <file file_name="../../../button_handler.h" />
     </folder>
     <folder Name="None">
       <file file_name="../../../../../../../modules/nrfx/mdk/ses_startup_nrf52833.s" />

@@ -93,12 +93,14 @@ void zigbee_init(void)
     zb_set_long_address(ieee_addr);
 
     /* Set static long IEEE address. */
-    zb_set_network_ed_role(IEEE_CHANNEL_MASK);
+    zb_set_network_ed_role(IEEE_CHANNEL_MASK); // Set end device role, along with a channel mask // IEEE_CHANNEL_MASK is a custom channel mask defined in zigbee.h
+    //zb_set_bdb_secondary_channel_set(ZB_TRANSCEIVER_ALL_CHANNELS_MASK);
     zigbee_erase_persistent_storage(ERASE_PERSISTENT_CONFIG);
 
     zb_set_ed_timeout(ED_AGING_TIMEOUT_64MIN);
     zb_set_keepalive_timeout(ZB_MILLISECONDS_TO_BEACON_INTERVAL(3000));
     zb_set_rx_on_when_idle(ZB_FALSE);
+    //zb_bdb_set_legacy_device_support(1); // Zigbee legacy mode (Zigbee PRO)
 
     /* Initialize application context structure. */
     UNUSED_RETURN_VALUE(ZB_MEMSET(&m_dev_ctx, 0, sizeof(m_dev_ctx)));
@@ -113,9 +115,11 @@ void zigbee_init(void)
     //ZB_ZCL_SET_REPORT_ATTR_CB(&report_attribute_cb);
 
     /** Start Zigbee Stack. */
-    zb_err_code = zboss_start_no_autostart();
+    zb_err_code = zboss_start_no_autostart(); // start_no_autostart does not trigger the commissioning.
+    //zb_err_code = zboss_start(); // start_no_autostart does not trigger the commissioning.
     ZB_ERROR_CHECK(zb_err_code);
-
+    
+    //bdb_start_top_level_commissioning(0); // 
 }
 
 
@@ -172,15 +176,34 @@ void zboss_signal_handler(zb_bufid_t bufid)
     zb_bool_t                  comm_status;
 
     /* Update network status LED */
-    zigbee_led_status_update(bufid, ZIGBEE_NETWORK_STATE_LED);
+    // zigbee_led_status_update(bufid, ZIGBEE_NETWORK_STATE_LED); // This function uses bsp (we cant use BSP and not use the gpiote driver)
 
     switch (sig)
     {
-        case ZB_BDB_SIGNAL_DEVICE_REBOOT:
-            /* fall-through */
+        static uint8_t commissioning_retries = 0;
+        case ZB_BDB_SIGNAL_DEVICE_REBOOT:                         //Signal that joinging the network was succesful
+            if(status==RET_OK)
+            {
+              if(ZB_JOINED()==true) {
+                NRF_LOG_INFO("JOINED NETWORK SUCCESSFULLY -> Status: %d", status);
+                nrf_gpio_pin_clear(ZIGBEE_NETWORK_STATE_LED); // LED on
+                NRF_LOG_INFO("Network-Role: %d", zb_get_network_role());
+                //joined_network=true;
+              } else {
+                NRF_LOG_INFO("JOINING NETWORK FAILED -> Status: %d, PRESS BUTTON TO TRY AGAIN", status);
+                //joined_network=false;
+              }
+            } else {
+              NRF_LOG_INFO("NO NETWORK FOUND!");
+              //retry_join(ZB_NWK_LEAVE_TYPE_RESET);
+              zb_bdb_set_legacy_device_support(1); // Zigbee legacy mode (Zigbee PRO)
+              nrf_gpio_pin_set(ZIGBEE_NETWORK_STATE_LED); // LED off
+            }
         case ZB_BDB_SIGNAL_STEERING:
             if (status == RET_OK)
             {
+                /* Update network status LED */
+                nrf_gpio_pin_clear(ZIGBEE_NETWORK_STATE_LED); // LED on
                 zb_ext_pan_id_t extended_pan_id;
                 char ieee_addr_buf[17] = {0};
                 int  addr_len;
@@ -199,12 +222,36 @@ void zboss_signal_handler(zb_bufid_t bufid)
             }
             else
             {
+                /* Update network status LED */
+                nrf_gpio_pin_set(ZIGBEE_NETWORK_STATE_LED); // LED off
                 NRF_LOG_ERROR("Failed to join network (status: %d)", status);
-                comm_status = bdb_start_top_level_commissioning(ZB_BDB_NETWORK_STEERING);
-                ZB_COMM_STATUS_CHECK(comm_status);
+                
+                // Retry n times
+                if (commissioning_retries < 3){
+                  comm_status = bdb_start_top_level_commissioning(ZB_BDB_NETWORK_STEERING);
+                  ZB_COMM_STATUS_CHECK(comm_status);
+                  commissioning_retries++;
+                } else if (commissioning_retries >= 3){
+                  commissioning_retries = 0;
+                }
             }
             break;
+        case ZB_ZDO_SIGNAL_LEAVE:
+            /* Update network status LED */
+            //bsp_board_led_off(led_idx);
+            NRF_LOG_INFO("Left the network");
+            nrf_gpio_pin_set(ZIGBEE_NETWORK_STATE_LED);
+            break;
+        case ZB_ZDO_SIGNAL_SKIP_STARTUP:
+            NRF_LOG_INFO("Started ZBOSS stack without commissioning.");
+            //bdb_start_top_level_commissioning(0);
+            /*
+              To avoid triggering commissioning at this point, call bdb_start_top_level_commissioning() with mask 0 that makes the stack proceed with the initialization without steering and commissioning. This option is recommended if:
 
+              The application is doing some other hardware initialization before the start of commissioning and prefers to use the stack multitasking during this initialization (for example, read some sensor data through the serial port).
+              The application does not start commissioning at power-up. Instead, it waits for a user action at every power-up (for example, a button press).
+            */
+        
         default:
             /* Call default signal handler. */
             ZB_ERROR_CHECK(zigbee_default_signal_handler(bufid));

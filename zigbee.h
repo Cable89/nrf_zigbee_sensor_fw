@@ -18,7 +18,7 @@
 
 #define IEEE_CHANNEL_MASK                  (1l << ZIGBEE_CHANNEL)               /**< Scan only one, predefined channel to find the coordinator. */
 #define ERASE_PERSISTENT_CONFIG            ZB_FALSE                             /**< Do not erase NVRAM to save the network parameters after device reboot or power-off. */
-#define ZIGBEE_NETWORK_STATE_LED           BSP_BOARD_LED_2                      /**< LED indicating that light switch successfully joind Zigbee network. */
+#define ZIGBEE_NETWORK_STATE_LED           15                      /**< LED indicating that light switch successfully joind Zigbee network. */
 
 
 extern sensor_device_ctx_t m_dev_ctx;

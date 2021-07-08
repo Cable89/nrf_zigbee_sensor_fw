@@ -48,6 +48,8 @@
 extern "C" {
 #endif
 
+#define USER_LED 13
+
 /* Basic cluster attributes initial values. For more information, see section 3.2.2.2 of the ZCL specification. */
 #define SENSOR_INIT_BASIC_APP_VERSION       01                                  /**< Version of the application software (1 byte). */
 #define SENSOR_INIT_BASIC_STACK_VERSION     10                                  /**< Version of the implementation of the Zigbee stack (1 byte). */

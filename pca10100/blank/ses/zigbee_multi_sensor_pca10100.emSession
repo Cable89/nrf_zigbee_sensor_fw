@@ -14,6 +14,7 @@
   <ProjectSessionItem path="zigbee_multi_sensor_pca10100"/>
   <ProjectSessionItem path="zigbee_multi_sensor_pca10100;zigbee_multi_sensor_pca10100"/>
   <ProjectSessionItem path="zigbee_multi_sensor_pca10100;zigbee_multi_sensor_pca10100;Application"/>
+  <ProjectSessionItem path="zigbee_multi_sensor_pca10100;zigbee_multi_sensor_pca10100;nRF_Zigbee"/>
  </Project>
  <Register1/>
  <Register2/>
@@ -38,7 +39,17 @@
   <Watches active="0" update="Never"/>
  </Watch4>
  <Files>
-  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="0" useTextEdit="1" useBinaryEdit="0" left="0" path="../../../main.c" selected="1" top="0" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="17" y="9" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="../../../main.c" selected="0" top="0" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="0" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="../../../zigbee.h" selected="0" top="0" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="44" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="../../../zb_multi_sensor.h" selected="0" top="6" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="148" useTextEdit="1" openedFrom="" useBinaryEdit="0" left="0" path="../../../zigbee.c" selected="0" top="116" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="32" useTextEdit="1" openedFrom="C:/nRF5_SDK_for_Thread_and_Zigbee_v4.1.0_32ce5f8/examples/zigbee/experimental/nrf_zigbee_sensor_fw/zigbee.c" useBinaryEdit="0" left="0" path="../../../ms_sensorsim.c" selected="1" top="0" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="3" useTextEdit="1" openedFrom="C:/nRF5_SDK_for_Thread_and_Zigbee_v4.1.0_32ce5f8/examples/zigbee/experimental/nrf_zigbee_sensor_fw/main.c" useBinaryEdit="0" left="0" path="../../../ms_sensorsim.h" selected="0" top="0" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="0" useTextEdit="1" openedFrom="C:/nRF5_SDK_for_Thread_and_Zigbee_v4.1.0_32ce5f8/examples/zigbee/experimental/nrf_zigbee_sensor_fw/ms_sensorsim.h" useBinaryEdit="0" left="0" path="../../../../../../../components/libraries/sensorsim/sensorsim.h" selected="0" top="0" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="157" useTextEdit="1" openedFrom="C:/nRF5_SDK_for_Thread_and_Zigbee_v4.1.0_32ce5f8/examples/zigbee/experimental/nrf_zigbee_sensor_fw/zb_multi_sensor.h" useBinaryEdit="0" left="0" path="../../../../../../../components/zigbee/pressure_cluster/zb_zcl_pressure_measurement.h" selected="0" top="118" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="0" useTextEdit="1" openedFrom="C:/nRF5_SDK_for_Thread_and_Zigbee_v4.1.0_32ce5f8/components/zigbee/pressure_cluster/zb_zcl_pressure_measurement.h" useBinaryEdit="0" left="0" path="../../../../../../../external/zboss/include/zcl/zb_zcl_common.h" selected="0" top="0" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="160" useTextEdit="1" openedFrom="C:/nRF5_SDK_for_Thread_and_Zigbee_v4.1.0_32ce5f8/components/zigbee/pressure_cluster/zb_zcl_pressure_measurement.h" useBinaryEdit="0" left="0" path="../../../../../../../components/zigbee/pressure_cluster/zb_zcl_pressure_measurement.c" selected="0" top="128" codecName="Default"/>
+  <SessionOpenFile windowGroup="DockEditLeft" x="0" y="314" useTextEdit="1" openedFrom="C:/nRF5_SDK_for_Thread_and_Zigbee_v4.1.0_32ce5f8/components/zigbee/pressure_cluster/zb_zcl_pressure_measurement.c" useBinaryEdit="0" left="0" path="../../../../../../../external/zboss/include/zb_types.h" selected="0" top="283" codecName="Default"/>
  </Files>
- <ARMCrossStudioWindow activeProject="zigbee_multi_sensor_pca10100" fileDialogDefaultFilter="*.c" autoConnectTarget="J-Link" buildConfiguration="Release" sessionSettings="" debugSearchFileMap="" fileDialogInitialDirectory="" debugSearchPath="" autoConnectCapabilities="3199"/>
+ <ARMCrossStudioWindow activeProject="zigbee_multi_sensor_pca10100" fileDialogDefaultFilter="*.c" autoConnectTarget="J-Link" buildConfiguration="Release" sessionSettings="" debugSearchFileMap="" fileDialogInitialDirectory="" debugSearchPath="" autoConnectCapabilities="3711"/>
 </session>
